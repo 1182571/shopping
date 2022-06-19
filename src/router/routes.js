@@ -7,12 +7,17 @@ import Register from '@/pages/Register';
 import Search from '@/pages/Search';
 import Detail from '@/pages/Detail';
 import AddCartSuccess from '@/pages/AddCartSuccess';
+import ShopCart from '@/pages/ShopCart';
 export default [
 	{
-		// 点击商品图片跳转详情页,需要带上产品的id
+		path: '/shopCart',
+		component: ShopCart,
+		meta: { show: true }
+	},
+	{
 		path: '/search',
 		component: Search,
-        name:'search',
+		name: 'search',
 		meta: { show: true }
 	},
 	{

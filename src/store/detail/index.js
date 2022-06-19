@@ -1,8 +1,13 @@
 import { reqGoodsInfo, reqAddOrUpdateShopCart } from '@/api';
-
+// 封装临时游客uuid  随机有一次就不能变了
+import {getUUID} from '@/utils/uuid_token'
 // 需要回到大仓库进行合并
 const state = {
-	goodinfo: {}
+	goodinfo: {},
+    //游客的临时身份 这样写每次都是随机的不同的
+    // uuid_token: uuid()
+    // 函数不管执行几次返回的都是一个
+    uuid_token:getUUID()
 };
 const mutations = {
 	GETGOODINFO(state, goodinfo) {
