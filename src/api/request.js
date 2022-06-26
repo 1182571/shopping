@@ -17,9 +17,13 @@ const requests = axios.create({
 requests.interceptors.request.use(config => {
 	// config 配置对象 里面有一个header很重要
 	if (store.state.deatil.uuid_token) {
-        // 接口只能带两个参数 用请求头的方式带参
+		// 接口只能带两个参数 用请求头的方式带参
 		// 如果有uuid则请区头添加一个字段userTempId 和后台商量好的不能瞎写
 		config.headers.userTempId = store.state.deatil.uuid_token;
+	}
+	//需要携带token带给服务器
+	if (store.state.user.token) {
+		config.headers.token = store.state.user.token;
 	}
 	// 进度条开始动 nprogress身上的start方法代表开始  done代表结束
 	nprogress.start();

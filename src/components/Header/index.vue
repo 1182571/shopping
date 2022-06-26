@@ -5,15 +5,20 @@
 			<div class="container">
 				<div class="loginList">
 					<p>尚品汇欢迎您！</p>
-					<p>
+                    <!-- 没有用户名显示 -->
+					<p v-if="!userName">
 						<span>请</span>
 						<router-link to="/login">登录</router-link>
 						<router-link to="/register" class="register">免费注册</router-link>
 					</p>
+                    <p v-else>
+                        <a href="">{{userName}}</a>
+                        <a class="register" href="" @click="loginOut">退出登录</a>
+                    </p>
 				</div>
 				<div class="typeList">
-					<a href="###">我的订单</a>
-					<a href="###">我的购物车</a>
+					<router-link to="/center/myorder">我的订单</router-link>
+					<router-link to="/ShopCart">我的购物车</router-link>
 					<a href="###">我的尚品汇</a>
 					<a href="###">尚品汇会员</a>
 					<a href="###">企业采购</a>
@@ -100,13 +105,30 @@ export default {
 				loction.query = this.$route.query;
 				this.$router.push(loction);
 			}
-		}
+		},
+        // 退出登录
+        loginOut(){
+            // 发送请求通知服务器退出登录 清楚token
+            // 清楚项目当中的userinfo token
+            try {
+                this.$store.dispatch('userLogOut')
+                this.$router.push('/home')
+            } catch (error) {
+                alert(error.message)
+            }
+        }
 	},
     // 通过全局事件总线清除keyword
     mounted() {
         this.$bus.$on('clear',()=>{
             this.keyword = ''
         })
+    },
+    computed:{
+        userName(){
+            // 用户名信息
+            return this.$store.state.user.userInfo.name
+        }
     },
 };
 </script>

@@ -42,10 +42,22 @@
 							<ul class="sui-nav">
 								<!-- 谁应该有类名 背景色  通过order中包含属性包含1综合 2价格-->
 								<li :class="{ active: isOne }" @click="changeOrder(1)">
-									<a>综合<span v-show="isOne" class="iconfont" :class="{'icon-cs-jt-xs-1-1':isasc,'icon-cs-jt-xx-1-1':isDasc}"></span></a>
+									<a
+										>综合<span
+											v-show="isOne"
+											class="iconfont"
+											:class="{ 'icon-cs-jt-xs-1-1': isasc, 'icon-cs-jt-xx-1-1': isDasc }"
+										></span
+									></a>
 								</li>
 								<li :class="{ active: isTwo }" @click="changeOrder(2)">
-									<a>价格<span v-show="isTwo" class="iconfont" :class="{'icon-cs-jt-xs-1-1':isasc,'icon-cs-jt-xx-1-1':isDasc}"></span></a>
+									<a
+										>价格<span
+											v-show="isTwo"
+											class="iconfont"
+											:class="{ 'icon-cs-jt-xs-1-1': isasc, 'icon-cs-jt-xx-1-1': isDasc }"
+										></span
+									></a>
 								</li>
 							</ul>
 						</div>
@@ -56,8 +68,10 @@
 							<li class="yui3-u-1-5" v-for="good in goodsList" :key="good.id">
 								<div class="list-wrap">
 									<div class="p-img">
-                                        <!-- 路由跳转的时候带id -->
-										<router-link :to="`/detail/${good.id}`" > <img :src="good.defaultImg" /></router-link>
+										<!-- 路由跳转的时候带id -->
+										<router-link :to="`/detail/${good.id}`">
+											<img v-lazy="good.defaultImg"
+										/></router-link>
 									</div>
 									<div class="price">
 										<strong>
@@ -89,7 +103,13 @@
 							</li>
 						</ul>
 					</div>
-					<Pagination :pageNo='searchParams.pageNo' :pageSize="searchParams.pageSize" :total='total' :continues="5" @getPageNo="getPageNo"></Pagination>
+					<Pagination
+						:pageNo="searchParams.pageNo"
+						:pageSize="searchParams.pageSize"
+						:total="total"
+						:continues="5"
+						@getPageNo="getPageNo"
+					></Pagination>
 				</div>
 			</div>
 		</div>
@@ -98,7 +118,7 @@
 
 <script>
 import SearchSelector from './SearchSelector/SearchSelector';
-import { mapGetters,mapState } from 'vuex';
+import { mapGetters, mapState } from 'vuex';
 export default {
 	name: 'Search',
 	components: {
@@ -134,7 +154,7 @@ export default {
 	// 组件挂载完毕之前执行一次
 	beforeMount() {
 		// beforceMount
-		console.log(this.$route.query);
+		// console.log(this.$route.query);
 		// 复杂的写法
 		// this.searchParams.category1Id = this.$route.query.category1Id;
 		// this.searchParams.category2Id = this.$route.query.category2Id;
@@ -160,16 +180,16 @@ export default {
 		isTwo() {
 			return this.searchParams.order.indexOf('2') != -1;
 		},
-        isasc(){
-            return this.searchParams.order.indexOf('asc')!=-1;
-        },
-        isDasc(){
-            return this.searchParams.order.indexOf('desc')!=-1;
-        },
-        ...mapState({
-            // 给上面提供数据
-            total:state=>state.search.searchList.total
-        })
+		isasc() {
+			return this.searchParams.order.indexOf('asc') != -1;
+		},
+		isDasc() {
+			return this.searchParams.order.indexOf('desc') != -1;
+		},
+		...mapState({
+			// 给上面提供数据
+			total: state => state.search.searchList.total
+		})
 	},
 	methods: {
 		getData() {
@@ -223,28 +243,28 @@ export default {
 			this.searchParams.props.splice(index, 1);
 			this.getData();
 		},
-        changeOrder(flage){
-            // flage标记 代表用户点击的是综合(1) 价格(2)
-            let originFlag = this.searchParams.order.split(':')[0]
-            let originSort = this.searchParams.order.split(':')[1]
-            // 新的order属性值
-            let newOrder = ''
-            // 这里的if确定点击的一定是综合
-            // 如果两个按钮是相同的,则判断取反
-            if(flage == originFlag){
-                newOrder = `${originFlag}:${originSort=='desc'?'asc':'desc'}` 
-            }else{
-                newOrder = `${flage}:${'desc'}`
-            }
-            // 将新的order赋值给order并且发送请求
-            this.searchParams.order = newOrder
-            this.getData()
-        },
-        getPageNo(pageNo){
-            // 整理带给服务器的参数
-            this.searchParams.pageNo = pageNo
-            this.getData();
-        }
+		changeOrder(flage) {
+			// flage标记 代表用户点击的是综合(1) 价格(2)
+			let originFlag = this.searchParams.order.split(':')[0];
+			let originSort = this.searchParams.order.split(':')[1];
+			// 新的order属性值
+			let newOrder = '';
+			// 这里的if确定点击的一定是综合
+			// 如果两个按钮是相同的,则判断取反
+			if (flage == originFlag) {
+				newOrder = `${originFlag}:${originSort == 'desc' ? 'asc' : 'desc'}`;
+			} else {
+				newOrder = `${flage}:${'desc'}`;
+			}
+			// 将新的order赋值给order并且发送请求
+			this.searchParams.order = newOrder;
+			this.getData();
+		},
+		getPageNo(pageNo) {
+			// 整理带给服务器的参数
+			this.searchParams.pageNo = pageNo;
+			this.getData();
+		}
 	},
 	watch: {
 		// 监听路由属性,发生变化,发送请求

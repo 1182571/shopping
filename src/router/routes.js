@@ -1,5 +1,4 @@
 // 引入路由组件
-
 //拆开路由
 import Home from '@/pages/Home';
 import Login from '@/pages/Login';
@@ -8,7 +7,69 @@ import Search from '@/pages/Search';
 import Detail from '@/pages/Detail';
 import AddCartSuccess from '@/pages/AddCartSuccess';
 import ShopCart from '@/pages/ShopCart';
+import Trade from '@/pages/Trade';
+import Pay from '@/pages/Pay';
+import PaySuccess from '@/pages/PaySuccess';
+import Center from '@/pages/Center';
+// 引入二级路由组件
+import myOrder from '@/pages/Center/myOrder';
+import groupOrder from '@/pages/Center/groupOrder';
+
 export default [
+	{
+		path: '/center',
+		component: Center,
+		meta: { show: true },
+		// 二级路由组件
+		children: [
+			{
+				path: 'myorder',
+				component: myOrder
+			},
+			{
+				path: 'grouporder',
+				component: groupOrder
+			},
+			{
+				path: '/center',
+				redirect: '/center/myorder'
+			}
+		]
+	},
+	{
+		path: '/paysuccess',
+		component: PaySuccess,
+		meta: { show: true }
+	},
+	{
+		path: '/pay',
+		component: Pay,
+		meta: { show: true },
+		beforeEnter: (to, from, next) => {
+			// 去支付页面只能在交易页去
+			if (from.path == '/trade') {
+				next();
+			} else {
+				// 中断当前导航  从哪来到哪去
+				next(false);
+			}
+		}
+	},
+	{
+		path: '/trade',
+		component: Trade,
+		meta: { show: true },
+		// 路由独享的守卫 在进入路由前判断是否符合条件
+		beforeEnter: (to, from, next) => {
+			// 去交易页面只能在购物车去
+			if (from.path == '/ShopCart') {
+				next();
+			} else {
+				// 中断当前导航  从哪来到哪去
+				next(false);
+			}
+		}
+	},
 	{
 		path: '/shopCart',
 		component: ShopCart,
@@ -16,7 +77,7 @@ export default [
 	},
 	{
 		path: '/search',
-		component: Search,
+		component: () => import('@/pages/Search'),
 		name: 'search',
 		meta: { show: true }
 	},
@@ -28,7 +89,9 @@ export default [
 	},
 	{
 		path: '/home',
-		component: Home,
+		// // 路由懒加载 只有访问的时候才会加载
+		// 当打包构建应用时，JavaScript 包会变得非常大，影响页面加载。如果我们能把不同路由对应的组件分割成不同的代码块，然后当路由被访问的时候才加载对应组件，这样就会更加高效。
+		component: () => import('@/pages/Home'),
 		meta: { show: true }
 	},
 	{

@@ -53,11 +53,12 @@
 		</div>
 		<div class="cart-tool">
 			<div class="select-all">
-				<input class="chooseAll" type="checkbox" :checked="isAllCheck" />
+				<input class="chooseAll" type="checkbox" :checked="isAllCheck && cartInfoList.length>0" :disabled="cartInfoList.length==0" @change="updateAllChecked" />
 				<span>全选</span>
 			</div>
 			<div class="option">
-				<a href="#none">删除选中的商品</a>
+				<!-- 没有删除全部产品的接口 但是有删除一个的  一次删一个promise.all -->
+				<a @click="deleteAllCheckCart">删除选中的商品</a>
 				<a href="#none">移到我的关注</a>
 				<a href="#none">清除下柜商品</a>
 			</div>
@@ -68,7 +69,7 @@
 					<i class="summoney">{{ totalPrice }}</i>
 				</div>
 				<div class="sumbtn">
-					<a class="sum-btn" href="###" target="_blank">结算</a>
+					<a class="sum-btn"  @click="$router.push('/trade')">结算</a>
 				</div>
 			</div>
 		</div>
@@ -139,6 +140,25 @@ export default {
 				// 如果修改成功
 				let isChecked = event.target.checked ? '1' : '0';
 				await this.$store.dispatch('updateCheckedById', { skuId: cart.skuId, isChecked });
+				this.getData();
+			} catch (error) {
+				alert(error.message);
+			}
+		},
+		// 删除全部选中的  没办法收集到id
+		async deleteAllCheckCart() {
+			try {
+				// 等待成功的结果
+				await this.$store.dispatch('deleteAllCheckCart');
+				this.getData();
+			} catch (error) {
+				alert(error.message);
+			}
+		},
+		async updateAllChecked(event) {
+			try {
+				let isAllCheck = event.target.checked ? '1' : 0;
+				await this.$store.dispatch('updateAllCartIsChecked', isAllCheck);
 				this.getData();
 			} catch (error) {
 				alert(error.message);

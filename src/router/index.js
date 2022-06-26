@@ -1,6 +1,7 @@
 //配置路由
 import Vue from 'vue';
 import VueRouter from 'vue-router';
+import store from '@/store';
 // 使用插件
 Vue.use(VueRouter);
 import routes from './routes';
@@ -39,10 +40,53 @@ VueRouter.prototype.replace = function (location, resolve, reject) {
 };
 
 // 配置路由
-export default new VueRouter({
+let router = new VueRouter({
 	routes,
 	scrollBehavior(to, from, savedPosition) {
 		// 始终滚动到顶部
 		return { y: 0 };
 	}
 });
+// 全局路由守卫  在路由跳转进行判断
+router.beforeEach(async (to, from, next) => {
+	// 有了token代表登录了  在store中
+	let token = store.state.user.token;
+	// 是否有用户的信息
+	let name = store.state.user.userInfo.name;
+	if (token) {
+		// 用户登陆了去login
+		if (to.path == '/login') {
+			next('/home');
+		} else {
+			// 登陆了去的不是login 用户名已经有
+			if (name) {
+				next();
+			} else {
+				// 没有用户信息 派发action获取
+				try {
+					await store.dispatch('getUSerInfo');
+					next();
+				} catch (error) {
+					// token失效了 清楚所有信息 回到登录
+					await store.dispatch('userLogOut');
+					next('/login');
+				}
+			}
+		}
+	} else {
+		// 未登录 不能去center交易相关,不能去支付相关pay paysuccess 不能去个人中心 跳转登录
+		let toPath = to.path;
+		if (
+			toPath.indexOf('/trade') != -1 ||
+			toPath.indexOf('/pay') != -1 ||
+			toPath.indexOf('/center') != -1
+		) {
+            // 把未登录想去而没去成的信息存储与地址栏中
+			next('/login?redirect=' + toPath);
+		} else {
+			next();
+		}
+	}
+});
+
+export default router;
